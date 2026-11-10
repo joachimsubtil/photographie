@@ -113,9 +113,9 @@ a { color: inherit; text-decoration: none; }
   #basket .minis { margin-bottom: 110px; }             /* les petites remontent */
   #volley .line { margin-left: 9%; }
   #volley .main { margin-bottom: 70px; }               /* la grande remonte un peu */
-  #rugby .line { width: 86%; }
-  #rugby .mini:first-child { margin-bottom: 120px; }    /* trois hauteurs différentes */
-  #rugby .mini:last-child { margin-bottom: 40px; }
+  #rugby .line { width: 94%; }
+  #rugby .minis { margin-bottom: 90px; }               /* les petites remontent à côté du panorama */
+  #rugby .mini-row + .mini-row { margin-left: 12%; }   /* deuxième rangée décalée */
   #boxe .line { margin-left: 4%; margin-right: 3%; }
   #boxe .minis { margin-bottom: -60px; }               /* les petites descendent sous la grande */
 }
