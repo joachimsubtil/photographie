@@ -49,16 +49,12 @@ a { color: inherit; text-decoration: none; }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 80px var(--side) 40px; position: relative;
 }
-.intro h1, .sport h2, .about h2 {
+.intro h1, .sport h2, .hors h2, .about h2 {
   font-family: var(--display); font-weight: var(--display-weight); font-style: var(--display-style);
   text-transform: var(--display-case); font-stretch: var(--display-stretch); letter-spacing: var(--display-tracking);
 }
 .intro h1 { margin: 0; line-height: .95; font-size: clamp(36px, 7vw, 116px); }
 .intro .role { margin: 18px 0 0; color: var(--muted); font-size: clamp(14px, 1.3vw, 17px); }
-.intro .pitch {
-  position: absolute; bottom: clamp(70px, 10vh, 110px); left: 0; right: 0;
-  margin: 0 auto; padding: 0 var(--side); color: var(--muted); font-size: 14px;
-}
 .intro .down { position: absolute; bottom: 28px; left: 50%; translate: -50% 0; color: var(--muted); animation: nudge 2.4s ease-in-out infinite; }
 
 /* Photos qui apparaissent sur le passage de la souris (ou toutes seules au doigt) */
@@ -88,36 +84,51 @@ a { color: inherit; text-decoration: none; }
   .sport h2 { grid-row: auto; }
   .sport-head p, .sport-head .count { text-align: left; }
 }
-/* une seule ligne par sport : la grande photo d'un côté, les petites alignées en bas de l'autre */
-/* la largeur de chaque côté est calculée dans la page pour que les deux aient à peu près la même hauteur */
-.line { display: grid; gap: var(--gap); align-items: end; padding-bottom: 32px; }
-.line > * { min-width: 0; }
-.line.flip .main { order: 2; }
-.shot { margin: 0; }
-.main { position: relative; }
-.main figcaption { position: absolute; top: 100%; left: 0; }
-/* petites photos : celles en largeur au-dessus, en plus grand ; celles en hauteur en rangée dessous */
-.minis { display: flex; flex-direction: column; gap: calc(var(--gap) * .6); }
-.mini-row { display: flex; align-items: flex-end; gap: calc(var(--gap) * .6); }
+/* chaque sport : la grande photo et la photo mise en avant côte à côte, à la même hauteur,
+   puis les autres en une rangée dessous, décalée de l'autre côté */
+.line { padding-bottom: 32px; }
+.shot { margin: 0; min-width: 0; }
+.duo { display: grid; gap: var(--gap); align-items: end; max-width: calc(var(--sum) * 84vh); }
+.duo .shot { position: relative; }
+.duo figcaption { position: absolute; top: 100%; left: 0; }
+.duo .no-cap figcaption { visibility: hidden; }
+.row {
+  display: flex; align-items: flex-end; gap: calc(var(--gap) * .6);
+  margin-top: calc(var(--gap) * 2.2); max-width: calc(var(--sum) * 34vh);
+}
 .mini { flex: var(--r) 1 0; min-width: 0; }
 .mini figcaption { display: none; }
+.sport:not(.is-flip) .row, .sport.is-flip .duo { margin-left: auto; }
 
-/* ---------- Un peu d'irrégularité : chaque sport a son propre retrait et ses décalages ---------- */
+/* ---------- Un peu d'irrégularité : chaque sport a ses propres retraits ---------- */
 @media (min-width: 761px) {
   /* titres alternés : à gauche, puis à droite */
   .sport.is-flip .sport-head { grid-template-columns: auto 1fr; }
   .sport.is-flip h2 { grid-column: 2; grid-row: 1 / span 2; text-align: right; }
   .sport.is-flip .sport-head p, .sport.is-flip .sport-head .count { grid-column: 1; text-align: left; }
 
-  #basket .line { margin-right: 7%; }
-  #basket .minis { margin-bottom: 110px; }             /* les petites remontent */
-  #volley .line { margin-left: 9%; }
-  #volley .main { margin-bottom: 70px; }               /* la grande remonte un peu */
-  #rugby .line { width: 94%; }
-  #rugby .minis { margin-bottom: 90px; }               /* les petites remontent à côté du panorama */
-  #rugby .mini-row + .mini-row { margin-left: 12%; }   /* deuxième rangée décalée */
-  #boxe .line { margin-left: 4%; margin-right: 3%; }
-  #boxe .minis { margin-bottom: -60px; }               /* les petites descendent sous la grande */
+  /* les deux grandes ne sont plus alignées : l'une descend, comme posées à la main */
+  .duo { align-items: start; }
+  /* dans la rangée du dessous, une photo sur deux remonte */
+  .row .mini:nth-child(2n) { margin-bottom: clamp(28px, 4.5vw, 72px); }
+
+  #basket .duo { width: 91%; }
+  #basket .feature { margin-top: clamp(60px, 9vw, 140px); }
+  #basket .row { margin-right: 5%; }
+
+  #rugby .duo { width: 97%; }
+  #rugby .main { margin-top: clamp(50px, 6vw, 90px); }
+  #rugby .row { margin-left: 9%; gap: var(--gap); }
+  #rugby .row .mini:nth-child(2n) { margin-bottom: 0; }
+  #rugby .row .mini:nth-child(3) { margin-bottom: clamp(40px, 6vw, 96px); }
+
+  #boxe .duo { margin-left: 3%; width: 97%; }
+  #boxe .feature { margin-top: clamp(90px, 12vw, 180px); }
+  #boxe .row { margin-right: 1%; margin-top: clamp(40px, 5vw, 80px); }
+
+  #volley .duo { width: 86%; margin-right: 4%; }
+  #volley .main { margin-top: clamp(70px, 10vw, 150px); }
+  #volley .row { margin-left: 2%; }
 }
 .frame {
   display: block; width: 100%; padding: 0; border: 0; background: #1b1818;
@@ -127,38 +138,73 @@ a { color: inherit; text-decoration: none; }
 .shot figcaption { margin-top: 12px; font-size: 13px; line-height: 1.4; color: var(--muted); }
 
 /* photos en volet : elles se dévoilent de bas en haut en arrivant à l'écran, l'image se pose en douceur */
-.js .shot .frame { clip-path: inset(100% 0 0 0); transition: clip-path 1.1s cubic-bezier(.7, 0, .2, 1); }
-.js .shot .frame img { scale: 1.12; transition: scale 1.6s cubic-bezier(.2, .7, .2, 1); }
-.js .shot.is-in .frame { clip-path: inset(0 0 0 0); }
+/* Apparition sobre, façon Apple : la photo monte doucement, sort d'un léger flou en fondu,
+   et l'image se pose avec un zoom à peine visible. Les photos d'un même sport arrivent l'une après l'autre. */
+.js .shot {
+  --d: 0s; --ease: cubic-bezier(.16, 1, .3, 1);
+  opacity: 0; translate: 0 56px; filter: blur(12px);
+  transition: opacity 1.1s ease var(--d), translate 1.4s var(--ease) var(--d), filter 1.1s ease var(--d);
+}
+.js .shot.is-in { opacity: 1; translate: 0 0; filter: none; }
+.js .shot .frame img { scale: 1.08; transition: scale 1.8s var(--ease) var(--d); }
 .js .shot.is-in .frame img { scale: 1; }
-.js .mini:nth-child(2) .frame { transition-delay: .12s; }
-.js .mini:nth-child(3) .frame { transition-delay: .24s; }
-.js .mini-row + .mini-row .mini .frame { transition-delay: .3s; }
-.js .shot figcaption { opacity: 0; transition: opacity .8s ease .6s; }
+.js .duo .shot + .shot { --d: .12s; }
+.js .mini:nth-child(2) { --d: .08s; }
+.js .mini:nth-child(3) { --d: .16s; }
+.js .mini:nth-child(4) { --d: .24s; }
+.js .shot figcaption { opacity: 0; transition: opacity .9s ease .5s; }
 .js .shot.is-in figcaption { opacity: 1; }
-.js .line .shot.done .frame { transition-delay: 0s; }   /* une fois dévoilée, la photo réagit tout de suite à la souris */
+.js .line .shot.done { --d: 0s; }   /* une fois dévoilée, la photo réagit tout de suite à la souris */
 
 /* téléphone : la grande photo en pleine largeur, les petites en rangée dessous */
 @media (max-width: 760px) {
   .top { grid-template-columns: 1fr auto; }
   .top nav { display: none; }
-  .line { display: block; padding-bottom: 0; }
-  .main figcaption { position: static; }
-  .minis { margin-top: 18px; }
+  .line { padding-bottom: 0; }
+  /* téléphone : les deux grandes l'une sous l'autre en pleine largeur, les autres sur deux colonnes */
+  .duo { grid-template-columns: 1fr !important; gap: 10px; max-width: none; }
+  .duo figcaption { display: none; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; align-items: start; max-width: none; margin-top: 10px; gap: 10px; }
 }
 
 /* ---------- Bandeau des photos hors sport, qui défile en continu ---------- */
-.hors { padding-top: clamp(110px, 14vw, 200px); }
-.hors-title { margin: 0 var(--side) 16px; font-size: 13px; color: var(--muted); }
+/* même en-tête que les sports (grand titre, ligne fine), même espacement : le bandeau s'enchaîne naturellement */
+.hors { padding-top: clamp(80px, 12vw, 200px); }
+.hors-head { margin: 0 var(--side) clamp(28px, 4vw, 56px); }
+.hors h2 { grid-row: span 2; margin: 0; line-height: .9; font-size: clamp(36px, 6.5vw, 108px); }
+@media (max-width: 760px) { .hors h2 { grid-row: auto; } }
+/* le bandeau arrive en fondu, comme les photos */
+.js .hors-window { opacity: 0; translate: 0 40px; transition: opacity 1.1s ease .15s, translate 1.4s cubic-bezier(.16, 1, .3, 1) .15s; }
+.js .hors.is-in .hors-window { opacity: 1; translate: 0 0; }
 .hors-window {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
-.hors-track { display: flex; width: max-content; animation: hors 70s linear infinite; }
+/* le défilement est piloté en JavaScript (main.js) : il avance seul, et on peut le faire glisser ou utiliser les flèches */
+.hors-window { touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.hors-window.is-dragging { cursor: grabbing; }
+.hors-window.is-dragging .hors-item { pointer-events: none; }
+.hors-track { display: flex; width: max-content; will-change: transform; }
 .hors-track > div { display: flex; gap: 10px; padding-right: 10px; }
-.hors-track img { height: clamp(110px, 13vw, 190px); width: auto; max-width: none; }
-@keyframes hors { to { transform: translateX(-50%); } }
+.hors-track img { -webkit-user-drag: none; }
+/* flèches sous le bandeau, à droite */
+.hors-nav { display: flex; justify-content: flex-end; gap: 10px; margin: clamp(16px, 2vw, 24px) var(--side) 0; }
+.hors-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid #3a3433; background: none;
+  color: var(--text); font: inherit; font-size: 18px; line-height: 1; cursor: pointer;
+  transition: background-color .25s, border-color .25s, color .25s;
+}
+.hors-btn:hover { background: var(--text); border-color: var(--text); color: var(--bg); }
+.hors-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.js .hors-nav { opacity: 0; transition: opacity 1s ease .5s; }
+.js .hors.is-in .hors-nav { opacity: 1; }
+/* photos du bandeau cliquables : elles s'ouvrent en grand dans la visionneuse */
+.hors-item { display: block; flex: none; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.hors-item img { transition: opacity .3s ease; }
+.hors-item:hover img { opacity: .82; }
+.hors-item:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.hors-track img { height: clamp(130px, 15vw, 230px); width: auto; max-width: none; }
 
 /* ---------- À propos : la photo à gauche, le texte, les chiffres et les infos à droite ---------- */
 .about {
@@ -206,11 +252,16 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Visionneuse plein écran ---------- */
 .viewer {
-  position: fixed; inset: 0; z-index: 50; background: rgba(12, 10, 10, .97);
+  position: fixed; inset: 0; z-index: 50;
   display: flex; align-items: center; justify-content: center; padding: 56px 72px 64px;
 }
 .viewer[hidden] { display: none; }
-.viewer img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+/* le fond noir apparaît en fondu pendant que la photo grandit */
+.viewer::before { content: ""; position: absolute; inset: 0; background: rgba(12, 10, 10, .97); opacity: 0; transition: opacity .45s ease; }
+.viewer.is-open::before { opacity: 1; }
+.viewer img { position: relative; z-index: 1; max-width: none; object-fit: contain; transform-origin: 0 0; will-change: transform; translate: 0 0; transition: translate .9s cubic-bezier(.2, .8, .2, 1); }
+.viewer-cap, .viewer-btn, .viewer-close { z-index: 2; opacity: 0; transition: opacity .3s ease; }
+.viewer.is-open :is(.viewer-cap, .viewer-btn, .viewer-close) { opacity: 1; transition-delay: .35s; }
 .viewer-cap {
   position: absolute; left: var(--side); right: var(--side); bottom: 18px; margin: 0;
   display: flex; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--muted);
@@ -220,7 +271,7 @@ a { color: inherit; text-decoration: none; }
   font: inherit; padding: 12px;
 }
 .viewer-btn { top: 50%; translate: 0 -50%; font-size: 26px; transition: opacity .2s; }
-.viewer-btn:hover, .viewer-close:hover { opacity: .6; }
+.viewer-btn:hover, .viewer-close:hover { opacity: .6; transition-delay: 0s; }
 .viewer-prev { left: 12px; }
 .viewer-next { right: 12px; }
 .viewer-close { top: 10px; right: calc(var(--side) - 12px); font-size: 14px; }
@@ -242,8 +293,8 @@ a { color: inherit; text-decoration: none; }
 .split.is-on .letter { translate: 0 0; }
 
 /* effet 3D des photos qui suivent la souris */
-.js .shot .frame.tilt { transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .6s ease, clip-path 1.1s cubic-bezier(.7, 0, .2, 1); }
-.js .shot .frame.tilt.is-tilting { transition: transform .12s linear, clip-path 1.1s cubic-bezier(.7, 0, .2, 1); }
+.js .shot .frame.tilt { transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .6s ease; }
+.js .shot .frame.tilt.is-tilting { transition: transform .12s linear; }
 
 /* curseur viseur (ordinateur) : point rouge + cadre de mise au point aux 4 coins */
 html.has-cursor, html.has-cursor * { cursor: none !important; }
@@ -278,12 +329,12 @@ html.has-cursor, html.has-cursor * { cursor: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .js .shot .frame, .js .shot.is-in .frame { clip-path: none; transition: none; }
-  .js .shot .frame img { scale: 1; transition: none; }
+  .js .shot .frame img { scale: 1; filter: none; transition: none; }
   .js .shot figcaption { opacity: 1; transition: none; }
   .split .letter { translate: 0 0; transition: none; }
   html { scroll-behavior: auto; }
-  .js .shot { opacity: 1; transform: none; transition: none; }
+  .js .shot { opacity: 1; transform: none; translate: none; filter: none; transition: none; }
   .intro .down { animation: none; }
-  .hors-track { animation: none; }
-  .hors-window { overflow-x: auto; }
+  .js .hors-window { opacity: 1; translate: none; transition: none; }
+  .js .hors-nav { opacity: 1; transition: none; }
 }
